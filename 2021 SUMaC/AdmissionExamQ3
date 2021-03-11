@@ -1,0 +1,206 @@
+class NReds:
+
+    def s2(self, N):
+        mask = ~((~ 0) << N)
+        usedcol = [0] * N
+        ans = []
+       
+   
+        # parameter sol: type str,
+        #            store upside level rows Red-grids,
+        #              which column count from right, 0-base, transform to 'A'-'Z'
+        # parameter shadow: last row put Reds, and their neibours, which bits set to 1
+        def dfs(sol, level, usedcol, shadow):
+            if level == N:
+                ans.append(sol)
+                return
+            possibles = ~ shadow & mask
+
+            while possibles:
+                bit1 = possibles & (- possibles)
+                col1 = bin(bit1).count('0') - 1
+               
+                next_possibles = possibles ^ bit1
+   
+                # check & set usedcol
+                if usedcol[col1] >= 2:
+                possibles = next_possibles
+                continue
+                else:
+                usedcol[col1] += 1
+   
+                #
+                '''
+                possibles_gone_bit1 = possibles ^ bit1
+                if not possibles_gone_bit1:  break
+                bit2_candi = possibles_gone_bit1 & (- possibles_gone_bit1)
+                col2_candi = bin(bit2_candi).count('0') - 1
+                '''
+
+                bit2_possibles = next_possibles & ~(bit1 << 1)
+               
+                while bit2_possibles:
+                    bit2 = bit2_possibles & (- bit2_possibles)
+                    col2 = bin(bit2_possibles).count('0') - 1
+                   
+                    next_bit2_possibles = bit2_possibles ^ bit2
+   
+                    # check & set usedcol
+                    if usedcol[col2] >= 2:
+                    bit2_possibles = next_bit2_possibles
+                    continue
+                    else:
+                    usedcol[col2] += 1
+                   
+                    # drill down
+                    next_shadow = (bit1 | bit2 | (bit1<<1) | (bit1>>1) |
+                                    (bit2<<1) | (bit2>>1)) & mask
+                    dfs(sol + chr(65+col1) + chr(65+col2),
+                                 level + 1, usedcol, next_shadow)
+                   
+                    # reverse status
+                    usedcol[col2] -= 1
+                   
+                    bit2_possibles = next_bit2_possibles
+   
+                   
+                usedcol[col1] -= 1   
+                possibles = next_possibles
+               
+           
+        dfs('', 0, usedcol, 0)
+        return ans
+   
+
+
+    def s3(self, N):
+        mask = ~((~ 0) << N)
+        usedcol = [0] * N
+        ans = []
+       
+   
+        # parameter sol: type str,
+        #            store upside level rows Red-grids,
+        #              which column count from right, 0-base, transform to 'A'-'Z'
+        # parameter shadow: last row put Reds, and their neibours, which bits set to 1
+        def dfs(sol, level, usedcol, shadow):
+            if level == N:
+                ans.append(sol)
+                return
+            possibles = ~ shadow & mask
+
+            while possibles:
+                bit1 = possibles & (- possibles)
+                col1 = bin(bit1).count('0') - 1
+               
+                next_possibles = possibles ^ bit1
+   
+                # check & set usedcol
+                if usedcol[col1] >= 3:
+                possibles = next_possibles
+                continue
+                else:
+                usedcol[col1] += 1
+   
+
+                bit2_possibles = next_possibles & ~(bit1 << 1)
+
+                while bit2_possibles:
+                    bit2 = bit2_possibles & (- bit2_possibles)
+                    col2 = bin(bit2_possibles).count('0') - 1
+                    
+                    next_bit2_possibles = bit2_possibles ^ bit2
+    
+                    # check & set usedcol
+                    if usedcol[col2] >= 3:
+                     bit2_possibles = next_bit2_possibles
+                     continue
+                    else:
+                     usedcol[col2] += 1
+                    
+                    
+                    bit3_possibles = next_bit2_possibles & ~(bit2 << 1)
+                    
+                    while bit3_possibles:
+                        bit3 = bit3_possibles & (- bit3_possibles)
+                        col3 = bin(bit3_possibles).count('0') - 1
+                        
+                        next_bit3_possibles = bit3_possibles ^ bit3
+        
+                        # check & set usedcol
+                        if usedcol[col3] >= 3:
+                         bit3_possibles = next_bit3_possibles
+                         continue
+                        else:
+                         usedcol[col3] += 1
+                    
+                    
+                    
+                        # drill down
+                        next_shadow = (bit1 | bit2 | bit3 |
+                                       (bit1<<1) | (bit1>>1) | 
+                                        (bit2<<1) | (bit2>>1) |
+                                         (bit3<<1) | (bit3>>1)) & mask
+                        dfs(sol + chr(65+col1) + chr(65+col2) + chr(65+col3), \
+                                     level + 1, usedcol, next_shadow)
+                        
+                        # reverse status
+                        usedcol[col3] -= 1
+                        
+                        bit3_possibles = next_bit3_possibles
+                        
+                        
+                    usedcol[col2] -= 1
+                    bit2_possibles = next_bit2_possibles
+    
+                    
+                usedcol[col1] -= 1    
+                possibles = next_possibles
+                
+            
+        dfs('', 0, usedcol, 0)
+        return ans
+    
+
+    def s1(self, N):
+        mask = ~((~ 0) << N)
+        usedcol = [0] * N
+        ans = []
+        
+    
+        # parameter sol: type str, 
+        # store upside level rows Red-grids,
+        # which column count from right, 0-base, transform to 'A'-'Z'
+        # parameter shadow: last row put Reds, and their neibours, which bits set to 1
+        def dfs(sol, level, usedcol, shadow):
+            if level == N:
+                ans.append(sol)
+                return
+            possibles = ~ shadow & mask
+
+            while possibles:
+                bit1 = possibles & (- possibles)
+                col1 = bin(bit1).count('0') - 1
+                
+                next_possibles = possibles ^ bit1
+    
+                # check & set usedcol
+                if usedcol[col1] >= 1:
+                 possibles = next_possibles
+                 continue
+                else:
+                 usedcol[col1] += 1
+    
+                    
+                # drill down
+                next_shadow = (bit1 | (bit1<<1) | (bit1>>1)) & mask
+                dfs(sol + chr(65+col1), \
+                             level + 1, usedcol, next_shadow)
+                
+                # reverse status
+                usedcol[col1] -= 1    
+                possibles = next_possibles
+                
+            
+        dfs('', 0, usedcol, 0)
+        return ans
